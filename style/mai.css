@@ -27,6 +27,23 @@ input[type="submit"] {
   margin: 20px;
   padding: 5px 10px;
 }
+.coms {
+  border-width: 2px;
+  border-style: dotted;
+  border-color: black;
+  margin: 20px;
+  padding: 5px 10px;
+}
+.comment {
+  font-size: medium;
+  font-style: italic;
+}
+.titlecom {
+  text-decoration: underline;
+}
+.date {
+  font-size: small;
+}
 h2 {
   color: blue;
 }

@@ -34,14 +34,42 @@ class ArticleManager extends DB
         }    
     } 
     
+    public function update($id)
+    {   
+        //sécuriser la donnée :
+        $title = htmlspecialchars($_POST['title']);
+        $content = htmlspecialchars($_POST["content"]);
+        //test si les champs sont vides :
+        if ($title == NULL OR $content == NULL )
+        {
+            $erreur = "vous n'avez rien écrit";
+            header('Location: ../vue/editArticle.php');
+            exit();
+        }
+        //sinon ok : 
+        else
+        {
+            //requete préparée :
+            $bdd = $this->connect();
+            $req = $bdd->prepare("UPDATE article SET title=:title, content=:content WHERE id=:id");
+            $req->execute(array(
+            'title' => $title,
+            'content' => $content,
+            'id' => $id,
+            ));
+            $req->closeCursor();
+            header('Location: ../vue/member.php'); 
+        }    
+    } 
+
     public function readLastArticle()
     {
         $bdd = $this->connect();
-        $reponse = $bdd->prepare('SELECT article.id, pseudo, content, title, user, article.date  FROM article INNER JOIN user ON article.user = user.id');
-        $reponse->execute();
-        $arts = $reponse->fetchAll();
+        $req = $bdd->prepare('SELECT article.id, pseudo, content, title, user, article.date  FROM article INNER JOIN user ON article.user = user.id');
+        $req->execute();
+        $arts = $req->fetchAll();
         $_SESSION["articles"]=$arts;
-        $reponse->closeCursor();
+        $req->closeCursor();
     }
 
     public function readMemberArticle()
@@ -50,21 +78,35 @@ class ArticleManager extends DB
         //on récupère l'ID du SESSION USER
         $actualUser = $_SESSION["user"];
         // on requete les articles dont l'id est la session en cours.
-        $reponse = $bdd->prepare('SELECT * FROM user LEFT JOIN article ON user.id = article.user WHERE user.id =?');
-        $reponse->execute([$actualUser->getID()]);
-        $arts = $reponse->fetchAll();
+        $req = $bdd->prepare('SELECT * FROM user LEFT JOIN article ON user.id = article.user WHERE user.id =?');
+        $req->execute([$actualUser->getID()]);
+        $arts = $req->fetchAll();
         $_SESSION["articleMember"]=$arts;
-        $reponse->closeCursor();
+        $req->closeCursor();
     }
 
     public function readOneArticle($id)
     {
         $bdd = $this->connect();
         // on requete les articles dont l'id est la session en cours.
-        $reponse = $bdd->prepare('SELECT * FROM user LEFT JOIN article ON user.id = article.user WHERE article.id =?');
-        $reponse->execute([$id]);
-        $arts = $reponse->fetch();
+        $req = $bdd->prepare('SELECT * FROM user LEFT JOIN article ON user.id = article.user WHERE article.id =:id');
+        $req->execute(array(
+            'id' => $id,
+            ));
+        $arts = $req->fetch();
         $_SESSION["oneArticle"]=$arts;
-        $reponse->closeCursor();
+        $req->closeCursor();
+    }
+
+    public function delete($id)
+    {
+        $bdd = $this->connect();
+        // on requete les articles dont l'id est la session en cours.
+        $req = $bdd->prepare('DELETE FROM article WHERE id =:id');
+        $req->execute(array(
+            'id' => $id,
+        ));
+        $req->closeCursor();
+        header('Location: ../vue/member.php');
     }
 }

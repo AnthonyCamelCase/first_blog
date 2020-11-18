@@ -1,5 +1,6 @@
-<?php require_once ("../modele/user.php");
-
+<?php 
+    require_once ("../modele/user.php");
+    require_once ("../modele/article.php");
     session_start();  
     //vérification avant accès à la page
     if (isset($_SESSION['user'])){}
@@ -8,10 +9,6 @@
         header('Location: ../vue/connexion.php');
         exit();
     }
-?>
-<?php 
-require_once ("../modele/article.php");
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -31,32 +28,28 @@ require_once ("../modele/article.php");
         <hr>   
         <h2>Votre page perso avec vos articles et commentaires.</h2>
 
-        <?php
-        require ("../modele/articleManager.php");
-        $d = new ArticleManager;
-        $d->readMemberArticle();
-        //var_dump($_SESSION["article"]);
-        ?>
+        <?php //appelle seulement les les articles du membre connecté
+            require ("../modele/articleManager.php");
+            $d = new ArticleManager;
+            $d->readMemberArticle();
         
-        <?php 
-        foreach ($_SESSION["articleMember"] as $article)
-        {
-            $arti = new Article($article);
+            foreach ($_SESSION["articleMember"] as $article)
+            {
+                $arti = new Article($article);
         ?>
 
         <div class="article">
             <h3><?=$arti->getTitle()?></h3>
-
             <p class="content"><?=$arti->getContent()?></p>
-            
             <p class="date">Date d'édition : <?=$arti->getDate()?> </p>
-
+            <button><a href="editArticle.php?id=<?= $arti->getId()?>">Modifier</a></button> 
+            <button><a href="../traitement/deleteArticle.php?id=<?= $arti->getId()?>">Supprimer</a></button>
             <button><a href="oneArticle.php?id=<?= $arti->getId()?>">voir l'article en entier</a></button>
-            
+        </div>
         </div>
         
         <?php
-        }
+            }
         ?>
 
     </body>
@@ -64,3 +57,5 @@ require_once ("../modele/article.php");
     <!-- Le pied de page -->
         
     <?php include("../template/pied.php"); ?>
+    
+</html>

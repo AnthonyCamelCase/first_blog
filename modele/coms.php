@@ -1,6 +1,6 @@
 <?php
 
-class Article
+class Coms
 {
     private $_id;
     private $_title;
@@ -57,6 +57,7 @@ class Article
     public function getArticle(){
         return $this->_article;
     }
+
 
     
 

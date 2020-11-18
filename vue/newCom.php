@@ -1,6 +1,5 @@
 <?php 
     require_once ("../modele/user.php");
-    require_once ("../modele/coms.php");
     session_start();
     //vérification avant accès à la page
     if (isset($_SESSION['user'])){}
@@ -45,30 +44,20 @@
             <p>Auteur : <?=$article["pseudo"]?></p>    
             
         </div>
-        <button><a href="newCom.php?id=<?= $id ?>">Commenter</a></button>  
-    
-    
-        <h3>Les commentaires</h3>
-        <?php
-            require ("../modele/comManager.php");
-            $e = new ComManager;
-            $e->read($id);
-            
-        foreach ($_SESSION["com"] as $coms)
-        {
-            $com = new Coms($coms);
-        
-        ?>
         <div class="coms">
-            <h4><?=$coms["pseudo"]?> a commenté ceci :</h4>
-            <p class=titlecom><?=$com->getTitle()?></p>
-            <p class=comment><?=$com->getContent()?></p>
-            <p class="date"><?=$com->getDate()?></p>      
-        </div>
-        <?php 
-        }
-        ?>
-
+            <fieldset>
+                <legend>Nouvel commentaire</legend>  
+                <form action="../traitement/writeCom.php?id=<?= $arti->getId()?>" method="post">
+                <label for="title"></label>
+                <input type="text" name="title" id="title" placeholder="c'est trop bien">
+                <br><br>
+                <label for="content"></label>
+                <textarea name="content" id="content" placeholder="Je trouve cet article super intéressant"></textarea>
+            </fieldset>
+            <br>
+            <button type="submit" value="edit">valider</button>
+            </form>   
+        </div> 
     </body>
 
     <!-- Le pied de page -->
